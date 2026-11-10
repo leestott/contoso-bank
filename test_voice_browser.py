@@ -39,11 +39,18 @@ class VoicePlaybackTests(unittest.TestCase):
             try:
                 deadline = time.monotonic() + 15
                 port_file = profile / "DevToolsActivePort"
-                while not port_file.exists() and time.monotonic() < deadline:
+                port = None
+                while port is None and time.monotonic() < deadline:
                     self.assertIsNone(process.poll(), "Edge exited before its debugger became ready.")
-                    time.sleep(0.05)
-                self.assertTrue(port_file.exists(), "Edge debugger did not become ready.")
-                port = port_file.read_text(encoding="utf-8").splitlines()[0]
+                    try:
+                        lines = port_file.read_text(encoding="utf-8").splitlines()
+                        if lines:
+                            port = lines[0]
+                    except (OSError, UnicodeDecodeError):
+                        pass
+                    if port is None:
+                        time.sleep(0.05)
+                self.assertIsNotNone(port, "Edge debugger did not become ready.")
                 with urllib.request.urlopen(f"http://127.0.0.1:{port}/json", timeout=5) as response:
                     target = next(item for item in json.load(response) if item["type"] == "page")
                 connection = websocket.create_connection(

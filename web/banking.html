@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en-GB">
+<!-- THESIS: An honest banking rehearsal desk, with deployment gaps visible beside working policy.
+OWN-WORLD: Existing ink-blue, cool-paper and teal approval-workbench system.
+STORY: Choose a synthetic caller, exercise the server-owned journey, then inspect the human decision and audit.
+FIRST VIEWPORT: Deployment status above a customer selector and two-column operations/staff workspace.
+FORM: Operate; extension of the established workbench, not a new visual identity. -->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contoso Bank | Multilingual banking rehearsal</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/banking.css">
+  <script src="/voice.js" defer></script>
+  <script src="/banking.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to banking workspace</a>
+  <header class="masthead">
+    <a class="brand" href="/banking"><span class="brandmark" aria-hidden="true">C</span><span>Contoso Bank<span class="brand-sub">BAKU / MULTILINGUAL AGENTS POC</span></span></a>
+    <nav class="environment" aria-label="Demo navigation"><span>Synthetic data only</span><a href="/">Procurement sandbox</a></nav>
+  </header>
+  <div class="safety-strip">No real accounts, payments or credit decisions.<span id="identity-status">Local operator roles are simulated, not independently authenticated bank staff.</span></div>
+  <main id="main">
+    <div class="page-heading"><div><h1>One bank. Three journeys.</h1><p id="experience-description">Azerbaijani card support, Russian-to-English SME lending, and English agentic payments. Working local policy flows; cloud voice and hosted-agent deployment are not complete.</p></div><div class="budget"><span>Foundry project</span><strong id="bank-project">Banking demo</strong><span id="bank-region">Deployment settings are local.</span></div></div>
+    <section class="deployment-warning" aria-labelledby="deployment-title"><h2 id="deployment-title">Cloud voice is not connected to this page</h2><p id="deployment-status">Loading saved deployment configuration…</p><details><summary>Architecture and deployment details</summary><p id="execution-description">The controls below exercise deterministic mock banking code. They are not a live Foundry agent or a voice fallback.</p></details></section>
+    <div id="notice" role="status" hidden></div>
+    <section class="language-welcome" aria-labelledby="welcome-title">
+      <div><h2 id="welcome-title">Welcome to Contoso Bank</h2><p>Choose a language and journey. Start the demo, then turn on the microphone. Your AI assistant will greet you in the selected language.</p></div>
+      <fieldset id="locale" class="language-picker" disabled>
+        <legend>Which language would you prefer?</legend>
+        <label><input type="radio" name="caller-language" value="en-GB"><span lang="en-GB">English</span></label>
+        <label><input type="radio" name="caller-language" value="ru-RU"><span lang="ru">Русский</span></label>
+        <label><input type="radio" name="caller-language" value="az-AZ"><span lang="az">Azərbaycan dili</span></label>
+      </fieldset>
+    </section>
+    <section class="caller-select" aria-label="Synthetic caller">
+      <label for="customer">Choose your demo journey</label><select id="customer"></select>
+      <button class="primary" id="start" aria-describedby="session-help" disabled>Start demo</button>
+      <p class="field-help" id="session-help">Each fresh demo starts a separate synthetic customer session. Nothing charges real money.</p>
+    </section>
+    <div id="session-workspace" hidden>
+      <div class="section-heading session-heading"><h2 id="caller-name"></h2><span class="status neutral" id="verified"></span></div>
+      <div class="session-overview">
+      <section id="voice-controls" class="voice-controls" aria-labelledby="voice-title" hidden>
+        <div class="section-heading"><h2 id="voice-title">Talk to the banking agent</h2><span id="voice-status" role="status">Microphone off.</span></div>
+        <p>AI voice · synthetic data and money · request a human at any time. Spoken verification uses the simulated SMS below. Your browser sends audio to this authenticated server, never Azure credentials.</p>
+        <div class="decision-actions"><button class="primary" id="voice-start">Start microphone</button><button class="secondary" id="voice-text-connect">Connect text-only</button><button class="danger" id="voice-end" disabled>End call</button></div>
+        <details class="voice-prompts"><summary>Suggested phrases for this journey</summary><div id="voice-prompts" class="decision-actions"></div><p class="field-help">Speak naturally after the greeting, or choose a prompt to draft it below. Choosing a prompt never sends it or authorizes a banking action.</p></details>
+        <p id="voice-empty" class="muted">Start a call to see live caller and AI captions here.</p>
+        <ol id="voice-captions" class="voice-captions" aria-label="Live caller and AI captions" aria-live="polite" aria-relevant="additions text"></ol>
+        <form id="voice-text-form" class="verification"><label for="voice-text">Send text to the live agent (not microphone input)</label><input id="voice-text" maxlength="2000" autocomplete="off" required><button class="secondary" id="voice-text-send" disabled>Send to agent</button></form>
+      </section>
+      <section class="demo-guide" aria-labelledby="guide-title">
+        <div class="demo-identity">
+          <h2 id="guide-title" tabindex="-1">Your synthetic caller</h2>
+          <p id="demo-name"></p>
+          <dl><dt>Date of birth to say aloud</dt><dd><time id="demo-dob"></time></dd></dl>
+          <p class="field-help">Demo fixtures only, not real customer data. Say this DOB when asked, then read the current OTP from <a href="#messages-title">SMS-style app messages</a>. Verification is never automatic.</p>
+          <div id="mandate-guide" class="mandate-guide" hidden>
+            <dl><dt>Synthetic mandate passcode</dt><dd id="demo-passcode" tabindex="-1">246810</dd></dl>
+            <p class="field-help">This is not the SMS verification code. After verifying the caller, review the limits below and say this passcode only when the agent asks. Nothing is confirmed automatically.</p>
+            <p class="field-help">Mandate: 300 AZN per payment, 500 AZN per UTC calendar month, valid for 30 days. Contoso Insurance and Baku Demo Utilities only.</p>
+          </div>
+        </div>
+        <div class="demo-journey">
+          <h2 id="scene-title"></h2>
+          <p id="scene-description"></p>
+          <ol id="journey-progress" class="journey-progress" aria-label="Session milestones"></ol>
+          <p id="journey-next" class="next-step" role="status"></p>
+        </div>
+      </section>
+      </div>
+      <div class="workspace">
+        <section class="request-pane" aria-labelledby="journey-title">
+          <div class="section-heading"><h2 id="journey-title">Banking workflow</h2><span class="small-tag" id="execution-mode">MANUAL POLICY REHEARSAL</span></div>
+          <details id="manual-controls" class="manual-controls">
+          <summary>Manual banking controls (optional)</summary>
+          <p class="field-help">Use these to rehearse individual steps without speaking. These buttons still invoke the same server-side banking safeguards.</p>
+          <form id="verify-form" class="verification">
+            <label for="dob">Synthetic date of birth</label><input id="dob" type="date" required>
+            <button type="submit" class="secondary">Send simulated OTP</button>
+          </form>
+          <form id="otp-form" class="verification"><label for="otp">Simulated SMS code</label><input id="otp" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="off" required><button class="primary" type="submit">Verify caller</button></form>
+          <p class="field-help">The OTP appears in the simulated banking app on the right, not in an agent tool response. All fixture details are synthetic.</p>
+          <div id="leyla" class="journey" hidden>
+            <h3 lang="az">İtmiş kart · Leyla</h3><p class="muted">Verify → freeze → review three transactions → registered-address replacement → virtual card.</p>
+            <div class="decision-actions"><button class="secondary" data-operation="freeze_card">Freeze lost card</button><button class="secondary" data-operation="transactions">Read last three transactions</button><button class="secondary" data-operation="replace_card">Replace to registered address</button><button class="secondary" data-operation="virtual_card">Issue simulated virtual card</button></div>
+          </div>
+          <div id="dmitri" class="journey" hidden>
+            <h3 lang="ru">Оборотный капитал · Dmitri</h3><p class="muted">Three bakery sites. 28 staff. Twelve synthetic statements, executable affordability calculation, and a two-page memo. Only a human decides.</p>
+            <button class="secondary" data-operation="statements">Retrieve 12 monthly statements</button>
+            <form id="memo-form" class="verification"><label for="amount">Working capital (AZN)</label><input id="amount" type="number" min="1000" max="100000" step="1" value="50000" required><button class="primary" type="submit">Calculate and route memo</button></form>
+          </div>
+          <div id="james" class="journey" hidden>
+            <h3>Agentic payments · James</h3><p class="muted">300 AZN per transaction · 500 AZN per UTC month · 30 days · Contoso Insurance and Baku Demo Utilities only.</p>
+            <label class="check-label"><input type="checkbox" id="mandate-confirm">I confirm these exact mandate limits and merchants.</label>
+            <form id="mandate-form" class="verification"><label for="passcode">Synthetic passcode</label><input id="passcode" type="password" inputmode="numeric" maxlength="6" autocomplete="off" required><button type="submit" class="primary">Create mandate</button></form>
+            <p class="field-help">Use the <a href="#demo-passcode">synthetic mandate passcode in your caller guide</a>, not the SMS code. Confirmation never authorizes amounts outside the mandate.</p>
+            <button class="secondary" data-operation="offers">Compare insurance and bill options</button>
+            <div class="decision-actions"><button class="secondary" data-offer="renewal-existing">Pay matching cover · 240 AZN</button><button class="secondary" data-offer="electricity">Pay electricity · 85 AZN</button><button class="danger" data-offer="flight-upgrade">Attempt upgrade · 650 AZN</button><button class="secondary" id="one-off">Request one-off review</button></div>
+          </div>
+          </details>
+          <div class="decision-actions"><button class="secondary" data-operation="handoff">Request a human</button><button class="secondary" data-operation="knowledge">Read synthetic source policies</button></div>
+          <h3 class="result-heading">Latest banking action</h3><p id="action-summary" role="status">No banking action yet. Start with caller verification.</p><details class="technical-evidence"><summary>Inspect raw tool result</summary><pre id="result">Start with caller verification.</pre></details>
+        </section>
+        <aside class="decision-pane" aria-labelledby="staff-title">
+          <div class="section-heading"><h2 id="staff-title">Staff &amp; banking app</h2><span class="small-tag" id="staff-mode">SIMULATED OPERATOR</span></div>
+          <h3 class="result-heading" id="messages-title" tabindex="-1">SMS-style app messages</h3><ul id="messages" class="app-messages"></ul>
+          <h3 class="result-heading">Aynur · human handoff</h3><p id="handoff" class="muted">No handoff requested.</p>
+<details class="staff-transcript"><summary>Call transcript · original and English</summary><p class="field-help">Original speech recognition is shown with an English machine translation for staff. Long digit runs such as OTPs are withheld from translation.</p><ol id="transcript" class="app-messages"></ol></details>
+          <section id="credit-review" hidden><h3 class="result-heading">Rashad · indicative credit decision</h3><p id="memo-summary" class="muted"></p><button class="secondary" id="view-memo">View two-page credit memo</button><label class="check-label"><input type="checkbox" id="review-confirm">I am the demo human reviewer and have reviewed the memo.</label><div class="decision-actions"><button class="primary" data-decision="indicative_offer">Indicative offer</button><button class="danger" data-decision="declined">Decline</button></div></section>
+          <details class="technical-evidence"><summary>Inspect customer-scoped state</summary><pre id="bank-state"></pre></details>
+        </aside>
+      </div>
+    </div>
+    <section class="audit-section"><details><summary>Governance evidence and safety checks</summary><div class="section-heading"><div><h2>Elena · governance evidence</h2><p class="muted">Hash-linked local audit. Not an immutable ledger or Foundry portal trace.</p></div><div class="decision-actions"><button class="secondary" id="injection">Replay cross-customer refusal</button><button class="secondary" id="export-audit">Export audit JSON</button></div></div><p id="audit-status" class="muted">Start a session to record banking actions.</p></details></section>
+    <footer><span id="cloud-scope">Local prototype · cloud voice, four hosted agents, MCP toolbox, Foundry IQ and portal evaluations remain incomplete.</span><span>AI disclosure, native-language review and venue-network audio rehearsal are release gates.</span></footer>
+  </main>
+  <dialog id="memo-dialog"><button class="secondary" id="close-memo">Close memo</button><div id="memo-pages"></div></dialog>
+</body>
+</html>

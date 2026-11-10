@@ -1,0 +1,8 @@
+{
+  "location": "eastus2",
+  "identity": {"type": "SystemAssigned"},
+  "properties": {
+    "displayName": "Banking demonstration",
+    "description": "Synthetic Contoso Bank multilingual hosted-agent and Voice Live demonstration."
+  }
+}

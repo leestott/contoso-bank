@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import re
+import socket
 import subprocess
 import tempfile
 import time
@@ -29,30 +30,32 @@ class VoicePlaybackTests(unittest.TestCase):
             page = Path(directory) / "fixture.html"
             page.write_text(content, encoding="utf-8")
             profile = Path(directory) / "profile"
+            with socket.socket() as port_socket:
+                port_socket.bind(("127.0.0.1", 0))
+                port = port_socket.getsockname()[1]
             process = subprocess.Popen(
                 [str(EDGE), "--headless", "--disable-gpu", "--no-first-run",
                  "--disable-background-networking", "--no-default-browser-check",
-                 "--user-data-dir=" + str(profile), "--remote-debugging-port=0", "about:blank"],
+                 "--user-data-dir=" + str(profile), "--remote-debugging-address=127.0.0.1",
+                 f"--remote-debugging-port={port}", "about:blank"],
                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
             )
             connection = None
             try:
                 deadline = time.monotonic() + 15
-                port_file = profile / "DevToolsActivePort"
-                port = None
+                target = None
                 while time.monotonic() < deadline:
-                    try:
-                        lines = port_file.read_text(encoding="utf-8").splitlines()
-                    except (FileNotFoundError, PermissionError):
-                        lines = []
-                    if lines:
-                        port = lines[0]
-                        break
                     self.assertIsNone(process.poll(), "Edge exited before its debugger became ready.")
+                    try:
+                        with urllib.request.urlopen(f"http://127.0.0.1:{port}/json", timeout=1) as response:
+                            target = next((item for item in json.load(response)
+                                           if item["type"] == "page"), None)
+                        if target:
+                            break
+                    except (OSError, ValueError):
+                        pass
                     time.sleep(0.05)
-                self.assertIsNotNone(port, "Edge debugger did not become ready.")
-                with urllib.request.urlopen(f"http://127.0.0.1:{port}/json", timeout=5) as response:
-                    target = next(item for item in json.load(response) if item["type"] == "page")
+                self.assertIsNotNone(target, "Edge debugger did not become ready.")
                 connection = websocket.create_connection(
                     target["webSocketDebuggerUrl"], timeout=10, suppress_origin=True)
                 sequence = 0

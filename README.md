@@ -1,4 +1,65 @@
-# Baku: banking POC and procurement sandbox
+# Contoso Bank: multilingual Foundry agents and native voice
+
+A synthetic banking demonstration built with Microsoft Foundry native voice,
+four hosted agents and deterministic policy enforcement. Explore lost-card
+services, SME lending and governed payments in English, Russian and Azerbaijani.
+No real customer data, payment rails or credit offers are involved.
+
+## Start the banking demo
+
+**Hosted voice demo:** Open your configured `BANKING_WEB_URL` with `/banking`
+in current Edge or Chrome and sign in with an authorized presenter account.
+Choose a language and journey, select **Start demo**, then **Start microphone**
+or **Connect text-only**. Both connection modes provide native audio and
+captions; text-only does not capture microphone input.
+An existing authenticated deployment is required. To deploy your own, follow
+[Azure configuration](#azure-configuration) and
+[hosted workers and authenticated cloud application](#hosted-workers-and-authenticated-cloud-application).
+
+**Local manual demo:** Requires Python 3.11+; no pip packages, Node or Azure
+sign-in are needed for the manual banking controls.
+
+```powershell
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }
+.\run.ps1
+# Open http://127.0.0.1:8765/banking
+```
+
+With regular Python, `python app.py` also starts the local server.
+The runner supports Azure CLI's embedded Python; use
+`.\run.ps1 -Python "C:\Path\To\python.exe" -Port 8765` to choose another runtime.
+Local banking uses deterministic controls, not microphone capture or cloud
+voice. Keep the server on loopback; do not expose it through a public tunnel.
+The local root `/` still serves the separate
+[legacy procurement sandbox](docs/procurement-demo.md).
+
+## Banking demo walkthrough
+
+1. **Lost card - Leyla:** Verify the synthetic DOB and current simulated OTP,
+   freeze the card, review transactions, request replacement to the registered
+   address and demonstrate the simulated virtual card.
+2. **SME lending - Dmitri:** Verify the caller, inspect twelve synthetic
+   statements and prepare the two-page indicative memo. Use the staff review
+   controls for the human-only decision; the agent cannot approve credit.
+3. **Governed payments - James:** Verify the caller and confirm a mandate using
+   the displayed synthetic passcode. Demonstrate permitted insurance and
+   utility payments, then a blocked upgrade or one-off review request.
+   The mandate limits are 300 AZN per payment, 500 AZN per UTC calendar month,
+   two allowed merchants and 30 days.
+
+Use the [guided banking and voice rehearsal](#guided-banking-and-voice-rehearsal)
+for caller DOBs, OTP instructions, passcode guidance and language behavior.
+All staff roles are demonstrated by one presenter, not independently staffed
+bank employees.
+
+## Documentation
+
+| Guide | Purpose |
+|---|---|
+| [Implementation specification](docs/specification.md) | Implemented behavior, approved scope changes, acceptance evidence and remaining gates |
+| [Application architecture](docs/architecture.md) | Voice, hosted agents, Toolboxes, storage and identity boundaries |
+| [Legacy procurement demo](docs/procurement-demo.md) | Separate shopping sandbox, purchase/approval walkthrough and local trust model |
+| [Security policy](SECURITY.md) | Private reporting, synthetic-data scope and public-sharing safeguards |
 
 ## Banking specification alignment and deployment status
 
@@ -110,12 +171,11 @@ and the required [Voice Live models](https://learn.microsoft.com/azure/ai-servic
 Managed models may use global or data-zone inference; resource location alone
 does not establish single-region data processing.
 
-### Working local banking prototype
+### Local banking behavior and limitations
 
-Run `.\run.ps1`, then open **http://127.0.0.1:8765/banking**. The original
-procurement demo remains at `/`, with its separate configuration in `.env`.
-The banking page explicitly displays the deployment
-status from local configuration. This loopback mode uses manual banking controls,
+Follow [Start the banking demo](#start-the-banking-demo) for the local `/banking`
+route or authenticated hosted voice mode. The local banking page explicitly
+displays the deployment status from configuration. Loopback mode uses manual banking controls,
 not the cloud voice bridge. It has no microphone or browser TTS fallback.
 Use the authenticated HTTPS deployment for microphone and native voice controls.
 Choose a language and journey, then select **Start demo**. The cloud workspace
@@ -168,41 +228,12 @@ machine output for staff; separate review of English translation fidelity has
 not been itemized. No measured latency result, survey completion or regulatory
 assurance is claimed.
 
-## Original procurement demo
-
-A runnable enterprise procurement demo exploring agentic-commerce research themes.
-An Azure Foundry prompt agent compares fictional products. A separate deterministic
-policy engine decides whether a simulated purchase may proceed. No payment
-provider, real merchant, bank account or survey submission is connected.
-
-## Run locally
-
-Requires Python 3.11+ and, for live agent calls, Azure CLI signed into the configured
-tenant. The manual local app has no pip or Node dependencies. Cloud serving and
-cloud tests require the Python packages in `requirements.txt` and
-`requirements-dev.txt`, respectively.
-
-```powershell
-if (-not (Test-Path .env)) { Copy-Item .env.example .env }
-# Fill .env with your own deployment settings for live calls.
-.\run.ps1
-# Open http://127.0.0.1:8765
-```
-
-`run.ps1` supports the Python runtime bundled with Azure CLI on Windows, including
-its isolated import path. To choose another interpreter:
-
-```powershell
-.\run.ps1 -Python "C:\Path\To\python.exe" -Port 8765
-```
-
-With a regular Python installation, `python app.py` also works. The server binds
-only to `127.0.0.1`. Do not expose it through a public tunnel or use it for real
-procurement. The explicit **Rule-based** mode runs without Azure sign-in and
-selects the cheapest allowed supplier in a category; it does not interpret the
-free-text request. Failed live calls surface an error and never silently switch modes.
-
 ## Azure configuration
+
+The manual local app has no pip or Node dependencies. Cloud serving and
+cloud tests require the Python packages in `requirements.txt` and
+`requirements-dev.txt`, respectively. Azure deployment and live calls require
+Azure CLI signed into the configured tenant.
 
 All deployment values belong in the local, **gitignored `.env`** or exported
 environment variables, which take precedence. `.env.example` contains only
@@ -214,10 +245,10 @@ assignments fail explicitly without including their values in errors.
 | Variables | Purpose |
 |---|---|
 | `AZURE_SUBSCRIPTION_ID`, `AZURE_TENANT_ID` | Exact Azure identity boundary |
-| `COMMERCE_*` | Procurement project, model and saved agent |
+| `COMMERCE_*` | Separate [legacy procurement](docs/procurement-demo.md) project, model and saved agent; not needed for banking |
 | `BANKING_*` | Separate banking project, region, model and voice version |
 | `BANKING_AZURE_SUBSCRIPTION_ID`, `BANKING_AZURE_TENANT_ID` | Optional banking identity overrides; preserve the procurement subscription when banking uses another tenant |
-| `DEMO_SURVEY_URL` | Optional HTTPS survey link, hidden when unset |
+| `DEMO_SURVEY_URL` | Optional legacy survey setting; the banking UI has no survey link |
 
 Never put credentials, account names, tenant/subscription IDs, personal links,
 deployment outputs or customer data in source or documentation. `.env*`,
@@ -279,21 +310,14 @@ uses its App Service managed identity. No Azure access tokens reach the browser.
 
 ```powershell
 az login
-.\run.ps1 -Task Provision
-```
-
-`Provision` creates the saved agent only if absent. For an existing agent, it checks
-the configured version and refuses a definition mismatch instead of overwriting.
-Project-scoped **Foundry User** is required for agent operations. Azure RBAC
-changes can take time to propagate. To deploy the banking infrastructure in
-your configured subscription, without changing your default subscription:
-
-```powershell
 .\run.ps1 -Task DeployBanking
 # After project readiness and project-scoped permissions are confirmed:
 .\run.ps1 -Task ProvisionVoice
 ```
 
+These commands deploy banking infrastructure in the configured subscription
+without changing the default subscription. Project-scoped **Foundry User** is
+required for agent operations; Azure RBAC changes can take time to propagate.
 Do not grant roles at account or subscription scope just to run this demo without
 reviewing the broader access.
 
@@ -480,69 +504,7 @@ AZ/RU pronunciation or venue latency. Presenter-reported sign-in, physical
 voice and native-language acceptance is recorded separately above; venue
 latency and independent backend execution evidence remain open.
 
-## Demo walkthrough
-
-1. **Within budget:** evaluate one headset from Northstar Supply (£45).
-   It is within the default £100 autonomous limit. Select **Simulate purchase**.
-1. **Needs approval:** evaluate the £229 monitor. Purchase is unavailable until
-   the demo approver acknowledges and approves it. Approval does not charge funds.
-1. **Blocked merchant:** the scenario evaluates a £29 Outlet Direct headset.
-   The allowlist blocks it despite its lower price. Approval cannot override it.
-1. **Hard limits:** evaluate two £349 monitors. The £698 total exceeds the
-   £500 per-transaction ceiling and remains blocked.
-1. **Reversal:** inspect a purchased order and reverse it. A simulated refund
-   restores the original purchase day's available budget.
-1. **Policy change:** tighten the policy after a recommendation. Purchase checks
-   the current limits, allowlist and UTC daily spend again.
-
-The default UTC daily budget is £1,000. Values use integer pence, inclusive limits
-and server-owned prices. SQLite transactions serialise checkout, preventing
-parallel requests from overspending or purchasing/refunding an order twice.
-Pending requests do not reserve budget, so a later purchase may be blocked.
-If current policy changes make a request ineligible, create a new recommendation.
-
-The order ledger, policy and hash-linked audit trail persist in
-`data\commerce.db` (gitignored). Stop the server before deleting that **specific
-file** for a fresh demo. Audit JSON is available through the UI. The UI shows the
-latest 30 events; the export includes all events.
-
-## Architecture and trust boundary
-
-```text
-Browser workbench
-  -> loopback Python HTTP API
-     -> Foundry saved prompt agent -> validated product ID + explanation
-     -> deterministic policy engine -> approval / block / ready
-     -> simulated purchase or refund
-     -> SQLite order state + hash-linked events
-```
-
-The agent has no execution tools. Its structured output is checked against the
-requested category's server-owned catalog. It cannot provide a new price, grant
-approval or bypass policy. The browser never receives an Azure token.
-
-The demo maps the survey's spending limits, merchant restrictions, human approval,
-explanations, agent identity, transaction audit trail and reversibility to working
-features. It **does not** claim real fraud protection, regulated payment compliance,
-merchant interoperability, negotiated pricing, real refunds or verified identity.
-No anonymous survey responses are collected or submitted.
-
-This is a **single-user local sandbox**, not a production approval system:
-
-- Operator, policy owner and approver labels are simulated roles in one local session.
-  There is no independent approver authentication or separation of duties.
-- Host and Origin checks, a per-server CSRF token and a restrictive CSP defend the
-  local browser boundary, but are not a replacement for authentication.
-- Hash linkage detects edits against the stored chain. A local database owner can
-  rewrite the chain or truncate it; it is not immutable or an externally anchored log.
-- Use synthetic requests only. Live requests send request text, catalog and policy
-  to Azure. `store: false` is set on Responses calls; this is not a guarantee of
-  zero service retention. Local orders retain the request and decision explanation.
-- Before production, add authenticated actors, independently authorised approvals,
-  managed identity, durable externally anchored audit storage, data-retention controls,
-  real payment-provider idempotency, fraud checks and deployment hardening.
-
-## Verify
+## Offline verification
 
 ```powershell
 .\run.ps1 -Task Test

@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+infra:
+    provider: microsoft.foundry
+name: contoso-bank
+services:
+    banking-voice-concierge:
+        description: Declarative (managed) voice speech-to-speech agent
+        host: azure.ai.agent
+        kind: prompt-voice
+        model:
+            id: ${BANKING_VOICE_MODEL}
+        modelType: managed
+        name: ${BANKING_VOICE_AGENT_NAME}
+        instructions: ${BANKING_VOICE_INSTRUCTIONS}
+        tools: ${BANKING_VOICE_TOOLS}
+        audio: ${BANKING_VOICE_AUDIO}
+        greeting: ${BANKING_VOICE_GREETING}
+        outputModalities: ${BANKING_VOICE_MODALITIES}
+        maxOutputTokens: ${BANKING_VOICE_MAX_TOKENS}
+        store: false
+        uses:
+            - contoso-bank
+    contoso-bank:
+        deployments:
+            - model:
+                format: OpenAI
+                name: gpt-4.1-mini
+                version: "2025-04-14"
+              name: ${BANKING_MODEL_DEPLOYMENT}
+              sku:
+                capacity: 10
+                name: Standard
+        host: azure.ai.project

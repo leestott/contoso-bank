@@ -1,0 +1,59 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {"type": "string", "defaultValue": "swedencentral"},
+    "accountName": {"type": "string"},
+    "projectName": {"type": "string"},
+    "modelDeployment": {"type": "string", "defaultValue": "banking-mini"}
+  },
+  "resources": [
+    {
+      "type": "Microsoft.CognitiveServices/accounts",
+      "apiVersion": "2025-06-01",
+      "name": "[parameters('accountName')]",
+      "location": "[parameters('location')]",
+      "kind": "AIServices",
+      "sku": {"name": "S0"},
+      "identity": {"type": "SystemAssigned"},
+      "properties": {
+        "allowProjectManagement": true,
+        "customSubDomainName": "[parameters('accountName')]",
+        "disableLocalAuth": true,
+        "publicNetworkAccess": "Enabled"
+      }
+    },
+    {
+      "type": "Microsoft.CognitiveServices/accounts/projects",
+      "apiVersion": "2025-06-01",
+      "name": "[concat(parameters('accountName'), '/', parameters('projectName'))]",
+      "location": "[parameters('location')]",
+      "identity": {"type": "SystemAssigned"},
+      "dependsOn": ["[resourceId('Microsoft.CognitiveServices/accounts/deployments', parameters('accountName'), parameters('modelDeployment'))]"],
+      "properties": {
+        "displayName": "[parameters('projectName')]",
+        "description": "Synthetic Contoso Bank multilingual hosted-agent and Voice Live demonstration."
+      }
+    },
+    {
+      "type": "Microsoft.CognitiveServices/accounts/deployments",
+      "apiVersion": "2025-06-01",
+      "name": "[concat(parameters('accountName'), '/', parameters('modelDeployment'))]",
+      "dependsOn": ["[resourceId('Microsoft.CognitiveServices/accounts', parameters('accountName'))]"],
+      "sku": {"name": "Standard", "capacity": 10},
+      "properties": {
+        "model": {"format": "OpenAI", "name": "gpt-4.1-mini", "version": "2025-04-14"}
+      }
+    }
+  ],
+  "outputs": {
+    "projectId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.CognitiveServices/accounts/projects', parameters('accountName'), parameters('projectName'))]"
+    },
+    "projectEndpoint": {
+      "type": "string",
+      "value": "[concat('https://', parameters('accountName'), '.services.ai.azure.com/api/projects/', parameters('projectName'))]"
+    }
+  }
+}

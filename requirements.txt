@@ -1,5 +1,5 @@
 azure-identity>=1.27.0,<2
-fastapi>=0.115,<1
+fastapi>=0.162.2,<1
 uvicorn[standard]>=0.54.0,<1
 websockets>=15,<17
 websocket-client>=1.9.2,<2

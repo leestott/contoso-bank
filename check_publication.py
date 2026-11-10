@@ -38,7 +38,7 @@ def findings(text, private):
 
 
 def private_path(name):
-    path = Path(name)
+    path = Path(name.replace("\\", "/"))
     return (any(part in {"data", ".azure", ".azd", ".git", ".venv", "__pycache__"}
                 for part in path.parts)
             or (path.name.startswith(".env") and path.name != ".env.example")
